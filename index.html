@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -21,8 +22,8 @@
   --font-mono:'Instrument Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:100%;overflow:hidden;}
-.app{display:flex;height:100vh;overflow:hidden;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:100%;}
+.app{display:flex;height:100vh;overflow:hidden;position:relative;}
 .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:10;}
 .sidebar-logo{padding:1.25rem 1.1rem 1rem;border-bottom:1px solid var(--border);}
 .logo-mark{display:flex;align-items:center;gap:9px;}
@@ -163,8 +164,8 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:
 .empty{text-align:center;padding:3rem 1rem;color:var(--text3);}
 .empty-icon{font-size:32px;margin-bottom:.75rem;}
 .empty-text{font-size:14px;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;}
-.modal-overlay.open{display:flex;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;pointer-events:none;}
+.modal-overlay.open{display:flex;pointer-events:all;}
 .modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;width:420px;max-width:95vw;}
 .modal-title{font-family:var(--font-serif);font-size:18px;color:var(--gold2);margin-bottom:.5rem;}
 .modal-sub{font-size:12px;color:var(--text3);margin-bottom:1.25rem;line-height:1.6;}
@@ -221,7 +222,7 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:
 .month-tab:hover{border-color:var(--text2);color:var(--text2);}
 .month-tab.active{background:var(--gold-dim);color:var(--gold2);border-color:rgba(201,168,76,.4);}
 /* EDIT OVERLAY */
-.edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;overflow-y:auto;display:none;pointer-events:none;}
+.edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;overflow-y:auto;display:none;}
 .edit-overlay.open{display:block;pointer-events:all;}
 .edit-wrap{max-width:700px;margin:0 auto;padding:1.5rem 1rem 5rem;}
 .edit-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;position:sticky;top:0;background:rgba(10,9,8,.95);padding:.75rem 0;backdrop-filter:blur(8px);z-index:2;}
@@ -229,13 +230,14 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:
 .edit-card-title{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;}
 
 @media(max-width:700px){
-  .sidebar{display:none;}
-  .field-grid{grid-template-columns:1fr 1fr;}
-  .dash-grid,.mgmt-grid{grid-template-columns:1fr;}
-  .ht-head,.ht-row{grid-template-columns:1fr 1fr 60px;}
-  .ht-head span:nth-child(n+3):not(:last-child),.ht-row .ht-cell:nth-child(n+3):not(:last-child){display:none;}
+.sidebar{display:none;}
+.field-grid{grid-template-columns:1fr 1fr;}
+.dash-grid,.mgmt-grid{grid-template-columns:1fr;}
+.ht-head,.ht-row{grid-template-columns:1fr 1fr 60px;}
+.ht-head span:nth-child(n+3):not(:last-child),.ht-row .ht-cell:nth-child(n+3):not(:last-child){display:none;}
 }
 </style>
+
 </head>
 <body>
 <div class="app">
@@ -282,94 +284,98 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:
       </div>
     </div>
 
-    <!-- DASHBOARD -->
-    <div class="page active" id="page-dashboard">
-      <div class="dl-banner">
-        <div><div class="dl-banner-text">Save this app to your device</div><div class="dl-banner-sub">Download the HTML file — open it in any browser, works offline</div></div>
-        <button class="btn btn-green" onclick="downloadAppFile()">⬇ Download App File</button>
-      </div>
-      <div class="stat-grid" id="dashStats"></div>
-      <div class="dash-grid">
-        <div class="dash-card"><div class="dash-card-title">Recent audits</div><div id="dashRecent"></div></div>
-        <div class="dash-card"><div class="dash-card-title">Average score by outlet</div><div id="dashOutletBars"></div></div>
-      </div>
-    </div>
+```
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="dl-banner">
+    <div><div class="dl-banner-text">Save this app to your device</div><div class="dl-banner-sub">Download the HTML file — open it in any browser, works offline</div></div>
+    <button class="btn btn-green" onclick="downloadAppFile()">⬇ Download App File</button>
+  </div>
+  <div class="stat-grid" id="dashStats"></div>
+  <div class="dash-grid">
+    <div class="dash-card"><div class="dash-card-title">Recent audits</div><div id="dashRecent"></div></div>
+    <div class="dash-card"><div class="dash-card-title">Average score by outlet</div><div id="dashOutletBars"></div></div>
+  </div>
+</div>
 
-    <!-- NEW AUDIT -->
-    <div class="page" id="page-audit">
-      <div class="audit-header-card">
-        <div class="field-grid">
-          <div class="field"><label>Outlet / Branch</label>
-            <select id="f_outlet">
-              <option value="">Select outlet…</option>
-              <option>APT Sunway Pyramid</option>
-              <option>A&amp;CO Sunway Pyramid</option>
-              <option>Starling Mall</option>
-              <option>One Utama</option>
-            </select>
-          </div>
-          <div class="field"><label>Auditor Name</label><input type="text" id="f_auditor" placeholder="Full name"/></div>
-          <div class="field"><label>Audit Date</label><input type="date" id="f_date"/></div>
-          <div class="field"><label>Audit Type</label>
-            <select id="f_type"><option>Monthly HQ Audit</option><option>Weekly Self-Check</option><option>Random Spot Check</option><option>Follow-up Audit</option></select>
-          </div>
-          <div class="field"><label>Visit Time</label><input type="time" id="f_time"/></div>
-          <div class="field"><label>Manager on Duty</label><input type="text" id="f_manager" placeholder="Name"/></div>
-        </div>
+<!-- NEW AUDIT -->
+<div class="page" id="page-audit">
+  <div class="audit-header-card">
+    <div class="field-grid">
+      <div class="field"><label>Outlet / Branch</label>
+        <select id="f_outlet">
+          <option value="">Select outlet…</option>
+          <option>APT Sunway Pyramid</option>
+          <option>A&amp;CO Sunway Pyramid</option>
+          <option>Starling Mall</option>
+          <option>One Utama</option>
+        </select>
       </div>
-      <div class="score-strip">
-        <div><div class="score-big" id="scoreNum">0</div><div class="score-pct-label">Total score</div></div>
-        <div class="score-info">
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:13px;color:var(--text3);">/ <span id="scoreMax">0</span> items</span><span class="grade-badge pill-C" id="gradeBox">–</span></div>
-          <div class="progress-wrap"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
-        </div>
-        <div class="sec-scores" id="sectionScores"></div>
+      <div class="field"><label>Auditor Name</label><input type="text" id="f_auditor" placeholder="Full name"/></div>
+      <div class="field"><label>Audit Date</label><input type="date" id="f_date"/></div>
+      <div class="field"><label>Audit Type</label>
+        <select id="f_type"><option>Monthly HQ Audit</option><option>Weekly Self-Check</option><option>Random Spot Check</option><option>Follow-up Audit</option></select>
       </div>
-      <div id="checklistRoot"></div>
-      <div class="mgmt-card">
-        <div class="mgmt-title">Management Observations</div>
-        <div class="mgmt-grid">
-          <div class="mgmt-field"><div class="mgmt-label">Execution gaps</div><textarea class="mgmt-ta" id="obs_gaps" placeholder="SOP deviations, recurring issues…"></textarea></div>
-          <div class="mgmt-field"><div class="mgmt-label">Staff skill gaps</div><textarea class="mgmt-ta" id="obs_skills" placeholder="Technical, product knowledge, communication…"></textarea></div>
-          <div class="mgmt-field"><div class="mgmt-label">Sales opportunities</div><textarea class="mgmt-ta" id="obs_sales" placeholder="Upsell gaps, membership conversion…"></textarea></div>
-          <div class="mgmt-field"><div class="mgmt-label">Action items & follow-up</div><textarea class="mgmt-ta" id="obs_action" placeholder="Who does what by when…"></textarea></div>
-        </div>
-        <div class="mgmt-field" style="margin-top:8px;"><div class="mgmt-label">Overall remarks</div><textarea class="mgmt-ta" id="obs_remarks" placeholder="General observations, commendations…" style="min-height:50px;width:100%;"></textarea></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:2rem;">
-        <button class="btn" onclick="saveDraft()">Save draft</button>
-        <button class="btn btn-gold" onclick="submitAudit()">Submit & save ↗</button>
-      </div>
+      <div class="field"><label>Visit Time</label><input type="time" id="f_time"/></div>
+      <div class="field"><label>Manager on Duty</label><input type="text" id="f_manager" placeholder="Name"/></div>
     </div>
+  </div>
+  <div class="score-strip">
+    <div><div class="score-big" id="scoreNum">0</div><div class="score-pct-label">Total score</div></div>
+    <div class="score-info">
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:13px;color:var(--text3);">/ <span id="scoreMax">0</span> items</span><span class="grade-badge pill-C" id="gradeBox">–</span></div>
+      <div class="progress-wrap"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+    </div>
+    <div class="sec-scores" id="sectionScores"></div>
+  </div>
+  <div id="checklistRoot"></div>
+  <div class="mgmt-card">
+    <div class="mgmt-title">Management Observations</div>
+    <div class="mgmt-grid">
+      <div class="mgmt-field"><div class="mgmt-label">Execution gaps</div><textarea class="mgmt-ta" id="obs_gaps" placeholder="SOP deviations, recurring issues…"></textarea></div>
+      <div class="mgmt-field"><div class="mgmt-label">Staff skill gaps</div><textarea class="mgmt-ta" id="obs_skills" placeholder="Technical, product knowledge, communication…"></textarea></div>
+      <div class="mgmt-field"><div class="mgmt-label">Sales opportunities</div><textarea class="mgmt-ta" id="obs_sales" placeholder="Upsell gaps, membership conversion…"></textarea></div>
+      <div class="mgmt-field"><div class="mgmt-label">Action items & follow-up</div><textarea class="mgmt-ta" id="obs_action" placeholder="Who does what by when…"></textarea></div>
+    </div>
+    <div class="mgmt-field" style="margin-top:8px;"><div class="mgmt-label">Overall remarks</div><textarea class="mgmt-ta" id="obs_remarks" placeholder="General observations, commendations…" style="min-height:50px;width:100%;"></textarea></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:2rem;">
+    <button class="btn" onclick="saveDraft()">Save draft</button>
+    <button class="btn btn-gold" onclick="submitAudit()">Submit & save ↗</button>
+  </div>
+</div>
 
-    <!-- HISTORY -->
-    <div class="page" id="page-history">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:8px;"><div class="month-tabs" id="monthTabs"></div><button class="btn" onclick="loadStorage().then(()=>renderHistory())">↻ Refresh</button></div>
-      <div class="history-filters">
-        <select class="filter-select" id="histOutletFilter" onchange="renderHistory()"><option value="">All outlets</option></select>
-        <select class="filter-select" id="histTypeFilter" onchange="renderHistory()"><option value="">All types</option><option>Monthly HQ Audit</option><option>Weekly Self-Check</option><option>Random Spot Check</option><option>Follow-up Audit</option></select>
-      </div>
-      <div class="history-table">
-        <div class="ht-head"><span>Outlet</span><span>Date</span><span>Auditor</span><span>Type</span><span>Score</span><span>Actions</span></div>
-        <div id="historyBody"></div>
-      </div>
-    </div>
+<!-- HISTORY -->
+<div class="page" id="page-history">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:8px;"><div class="month-tabs" id="monthTabs"></div><button class="btn" onclick="loadStorage()">↻ Refresh</button></div>
+  <div class="history-filters">
+    <select class="filter-select" id="histOutletFilter" onchange="renderHistory()"><option value="">All outlets</option></select>
+    <select class="filter-select" id="histTypeFilter" onchange="renderHistory()"><option value="">All types</option><option>Monthly HQ Audit</option><option>Weekly Self-Check</option><option>Random Spot Check</option><option>Follow-up Audit</option></select>
+  </div>
+  <div class="history-table">
+    <div class="ht-head"><span>Outlet</span><span>Date</span><span>Auditor</span><span>Type</span><span>Score</span><span>Actions</span></div>
+    <div id="historyBody"></div>
+  </div>
+</div>
 
-    <!-- COMPARE -->
-    <div class="page" id="page-compare">
-      <div class="cmp-controls">
-        <span class="cmp-label">Compare:</span>
-        <select class="filter-select" id="cmpSel1" onchange="renderCompare()"><option value="">Select audit 1…</option></select>
-        <span class="cmp-label">vs</span>
-        <select class="filter-select" id="cmpSel2" onchange="renderCompare()"><option value="">Select audit 2…</option></select>
-        <button class="btn" onclick="addCmpSlot()">+ Add</button>
-      </div>
-      <div id="cmpContent"></div>
-    </div>
+<!-- COMPARE -->
+<div class="page" id="page-compare">
+  <div class="cmp-controls">
+    <span class="cmp-label">Compare:</span>
+    <select class="filter-select" id="cmpSel1" onchange="renderCompare()"><option value="">Select audit 1…</option></select>
+    <span class="cmp-label">vs</span>
+    <select class="filter-select" id="cmpSel2" onchange="renderCompare()"><option value="">Select audit 2…</option></select>
+    <button class="btn" onclick="addCmpSlot()">+ Add</button>
+  </div>
+  <div id="cmpContent"></div>
+</div>
+```
+
   </div>
 </div>
 
 <!-- Drive Modal -->
+
 <div class="modal-overlay" id="driveModal">
   <div class="modal">
     <div class="modal-title">Connect Google Drive</div>
@@ -382,8 +388,8 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:
 
 <div class="toast" id="toast"></div>
 
-
 <!-- EDIT OVERLAY -->
+
 <div class="edit-overlay" id="editOverlay">
   <div class="edit-wrap">
     <div class="edit-topbar">
@@ -403,7 +409,6 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);height:
 <div class="report-overlay" id="reportOverlay">
   <div class="report-wrap" id="reportWrapInner"></div>
 </div>
-
 
 <script>
 const SECTIONS=[
@@ -599,294 +604,262 @@ function buildChecklist(){
     const div=document.createElement('div');div.className='section-card';
     div.innerHTML=`<div class="sec-header" onclick="toggleSec(this)"><div class="sec-left"><div class="sec-emoji">${sec.icon}</div><div class="sec-title">${sec.title}</div></div><div class="sec-right"><span class="sec-score-badge" id="sscore_${sec.id}">0/${sec.items.length}</span><span class="chev">▾</span></div></div>
     <div class="sec-body">${sec.items.map(it=>`<div class="check-item"><div class="check-top"><div class="check-buttons"><button class="cb" id="cb_pass_${it.id}" onclick="setCheck('${sec.id}','${it.id}','pass')">✓ Pass</button><button class="cb" id="cb_fail_${it.id}" onclick="setCheck('${sec.id}','${it.id}','fail')">✗ Fail</button><button class="cb" id="cb_na_${it.id}" onclick="setCheck('${sec.id}','${it.id}','na')">— N/A</button></div><div class="check-text">${it.text}${it.critical?'<span class="critical-badge">Critical</span>':''}</div></div><div class="check-bottom"><textarea class="comment-input" rows="1" placeholder="Add comment…" onchange="setComment('${sec.id}','${it.id}',this.value)"></textarea><button class="photo-btn" onclick="triggerPhoto('${it.id}')">📷 Photo</button><input type="file" accept="image/*" id="ph_${it.id}" style="display:none" multiple onchange="handlePhoto('${it.id}',this)"/></div><div class="photo-previews" id="previews_${it.id}"></div></div>`).join('')}</div>`;
-    root.appendChild(div);
-  });
+
+```
+root.appendChild(div);
+```
+
+});
 }
 
-function toggleSec(h){const b=h.nextElementSibling,c=h.querySelector('.chev'),o=b.classList.toggle('open');c.classList.toggle('open',o);}
-function setCheck(sId,iId,v){const p=auditState[sId][iId].val;auditState[sId][iId].val=(p===v)?null:v;const c=auditState[sId][iId].val;document.getElementById('cb_pass_'+iId).className='cb'+(c==='pass'?' pass-sel':'');document.getElementById('cb_fail_'+iId).className='cb'+(c==='fail'?' fail-sel':'');document.getElementById('cb_na_'+iId).className='cb'+(c==='na'?' na-sel':'');updateScore();}
+function toggleSec(h){const b=h.nextElementSibling,c=h.querySelector(’.chev’),o=b.classList.toggle(‘open’);c.classList.toggle(‘open’,o);}
+function setCheck(sId,iId,v){const p=auditState[sId][iId].val;auditState[sId][iId].val=(p===v)?null:v;const c=auditState[sId][iId].val;document.getElementById(‘cb_pass_’+iId).className=‘cb’+(c===‘pass’?’ pass-sel’:’’);document.getElementById(‘cb_fail_’+iId).className=‘cb’+(c===‘fail’?’ fail-sel’:’’);document.getElementById(‘cb_na_’+iId).className=‘cb’+(c===‘na’?’ na-sel’:’’);updateScore();}
 function setComment(sId,iId,v){auditState[sId][iId].comment=v;}
-function triggerPhoto(id){document.getElementById('ph_'+id).click();}
-function handlePhoto(id,inp){if(!auditPhotos[id])auditPhotos[id]=[];Array.from(inp.files).forEach(f=>{const r=new FileReader();r.onload=e=>{auditPhotos[id].push(e.target.result);renderPreviews(id);};r.readAsDataURL(f);});inp.value='';}
-function renderPreviews(id){const w=document.getElementById('previews_'+id);if(!w)return;w.innerHTML=(auditPhotos[id]||[]).map((s,i)=>`<div class="photo-thumb"><img src="${s}"/><button class="photo-remove" onclick="removePhoto('${id}',${i})">×</button></div>`).join('');}
+function triggerPhoto(id){document.getElementById(‘ph_’+id).click();}
+function handlePhoto(id,inp){if(!auditPhotos[id])auditPhotos[id]=[];Array.from(inp.files).forEach(f=>{const r=new FileReader();r.onload=e=>{auditPhotos[id].push(e.target.result);renderPreviews(id);};r.readAsDataURL(f);});inp.value=’’;}
+function renderPreviews(id){const w=document.getElementById(‘previews_’+id);if(!w)return;w.innerHTML=(auditPhotos[id]||[]).map((s,i)=>`<div class="photo-thumb"><img src="${s}"/><button class="photo-remove" onclick="removePhoto('${id}',${i})">×</button></div>`).join(’’);}
 function removePhoto(id,i){auditPhotos[id].splice(i,1);renderPreviews(id);}
 
 function updateScore(){
-  let total=0,max=0;const ss=[];
-  SECTIONS.forEach(sec=>{let s=0,m=0;sec.items.forEach(it=>{const v=auditState[sec.id]?.[it.id]?.val;if(v==='na')return;m++;if(v==='pass')s++;});total+=s;max+=m;ss.push({id:sec.id,title:sec.title.split(' ')[0],s,m});const el=document.getElementById('sscore_'+sec.id);if(el)el.textContent=s+'/'+m;});
-  const en=document.getElementById('scoreNum'),em=document.getElementById('scoreMax');if(en)en.textContent=total;if(em)em.textContent=max;
-  const pct=max?Math.round(total/max*100):0;const pb=document.getElementById('progressBar');if(pb)pb.style.width=pct+'%';
-  const g=pct>=90?'A':pct>=75?'B':'C';const gb=document.getElementById('gradeBox');if(gb){gb.textContent=pct+'% '+g;gb.className='grade-badge pill-'+g;}
-  const sc=document.getElementById('sectionScores');if(sc)sc.innerHTML=ss.map(s=>`<div class="sec-sc"><div class="sec-sc-v">${s.m?Math.round(s.s/s.m*100):0}%</div><div class="sec-sc-l">${s.title}</div></div>`).join('');
-  return{total,max,pct,grade:g};
+let total=0,max=0;const ss=[];
+SECTIONS.forEach(sec=>{let s=0,m=0;sec.items.forEach(it=>{const v=auditState[sec.id]?.[it.id]?.val;if(v===‘na’)return;m++;if(v===‘pass’)s++;});total+=s;max+=m;ss.push({id:sec.id,title:sec.title.split(’ ‘)[0],s,m});const el=document.getElementById(‘sscore_’+sec.id);if(el)el.textContent=s+’/’+m;});
+const en=document.getElementById(‘scoreNum’),em=document.getElementById(‘scoreMax’);if(en)en.textContent=total;if(em)em.textContent=max;
+const pct=max?Math.round(total/max*100):0;const pb=document.getElementById(‘progressBar’);if(pb)pb.style.width=pct+’%’;
+const g=pct>=90?‘A’:pct>=75?‘B’:‘C’;const gb=document.getElementById(‘gradeBox’);if(gb){gb.textContent=pct+’% ‘+g;gb.className=‘grade-badge pill-’+g;}
+const sc=document.getElementById(‘sectionScores’);if(sc)sc.innerHTML=ss.map(s=>`<div class="sec-sc"><div class="sec-sc-v">${s.m?Math.round(s.s/s.m*100):0}%</div><div class="sec-sc-l">${s.title}</div></div>`).join(’’);
+return{total,max,pct,grade:g};
 }
 
 function collectAudit(){
-  const{total,max,pct,grade}=updateScore();
-  const d={id:Date.now(),outlet:document.getElementById('f_outlet').value,auditor:document.getElementById('f_auditor').value,date:document.getElementById('f_date').value,type:document.getElementById('f_type').value,time:document.getElementById('f_time').value,manager:document.getElementById('f_manager').value,sections:{},photos:{},observations:{gaps:document.getElementById('obs_gaps').value,skills:document.getElementById('obs_skills').value,sales:document.getElementById('obs_sales').value,action:document.getElementById('obs_action').value,remarks:document.getElementById('obs_remarks').value},score:{total,max,pct,grade},savedAt:new Date().toISOString(),isDraft:false};
-  SECTIONS.forEach(sec=>{d.sections[sec.id]=JSON.parse(JSON.stringify(auditState[sec.id]||{}));});
-  Object.keys(auditPhotos).forEach(k=>{d.photos[k]=auditPhotos[k];});
-  return d;
+const{total,max,pct,grade}=updateScore();
+const d={id:Date.now(),outlet:document.getElementById(‘f_outlet’).value,auditor:document.getElementById(‘f_auditor’).value,date:document.getElementById(‘f_date’).value,type:document.getElementById(‘f_type’).value,time:document.getElementById(‘f_time’).value,manager:document.getElementById(‘f_manager’).value,sections:{},photos:{},observations:{gaps:document.getElementById(‘obs_gaps’).value,skills:document.getElementById(‘obs_skills’).value,sales:document.getElementById(‘obs_sales’).value,action:document.getElementById(‘obs_action’).value,remarks:document.getElementById(‘obs_remarks’).value},score:{total,max,pct,grade},savedAt:new Date().toISOString(),isDraft:false};
+SECTIONS.forEach(sec=>{d.sections[sec.id]=JSON.parse(JSON.stringify(auditState[sec.id]||{}));});
+Object.keys(auditPhotos).forEach(k=>{d.photos[k]=auditPhotos[k];});
+return d;
 }
 
-function saveDraft(){const d=collectAudit();d.isDraft=true;const i=audits.findIndex(a=>a.isDraft);if(i>=0)audits[i]=d;else audits.unshift(d);saveStorage();showToast('Draft saved ✓');}
+function saveDraft(){const d=collectAudit();d.isDraft=true;const i=audits.findIndex(a=>a.isDraft);if(i>=0)audits[i]=d;else audits.unshift(d);saveStorage();showToast(‘Draft saved ✓’);}
 
 async function submitAudit(){
-  const o=document.getElementById('f_outlet').value;if(!o){showToast('Please select an outlet first');return;}
-  const d=collectAudit();
-  const i=audits.findIndex(a=>a.isDraft);if(i>=0)audits.splice(i,1);
-  audits.unshift(d);saveStorage();
-  document.getElementById('draftBadge').style.display='none';
-  showToast('Saving to cloud…');
-  const ok=await saveToCloud(d);
-  if(ok){
-    showToast('Audit submitted & saved to cloud ✓');
-  } else {
-    showToast('Saved locally — will sync when online');
-  }
-  setTimeout(()=>goto('history',null),900);
+const o=document.getElementById(‘f_outlet’).value;if(!o){showToast(‘Please select an outlet first’);return;}
+const d=collectAudit();
+const i=audits.findIndex(a=>a.isDraft);if(i>=0)audits.splice(i,1);
+audits.unshift(d);saveStorage();
+document.getElementById(‘draftBadge’).style.display=‘none’;
+showToast(‘Saving to cloud…’);
+const ok=await saveToCloud(d);
+if(ok){
+showToast(‘Audit submitted & saved to cloud ✓’);
+} else {
+showToast(‘Saved locally — will sync when online’);
+}
+setTimeout(()=>goto(‘history’,null),900);
 }
 
 function exportJSON(d){
-  const blob=new Blob([JSON.stringify({...d,photos:'[photo data stored locally]'},null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`APT_Audit_${(d.outlet||'outlet').replace(/\s+/g,'_')}_${d.date}.json`;a.click();
-  if(driveSettings.url){setTimeout(()=>window.open(driveSettings.url,'_blank'),600);}
+const blob=new Blob([JSON.stringify({…d,photos:’[photo data stored locally]’},null,2)],{type:‘application/json’});
+const a=document.createElement(‘a’);a.href=URL.createObjectURL(blob);a.download=`APT_Audit_${(d.outlet||'outlet').replace(/\s+/g,'_')}_${d.date}.json`;a.click();
+if(driveSettings.url){setTimeout(()=>window.open(driveSettings.url,’_blank’),600);}
 }
 
 // ── DOWNLOAD THE APP ITSELF ──────────────────────────────────────
 function downloadAppFile(){
-  const html=document.documentElement.outerHTML;
-  const blob=new Blob([html],{type:'text/html'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='APT_Salon_Audit_App.html';a.click();
-  showToast('App downloaded! Open the .html file in any browser.');
+const html=document.documentElement.outerHTML;
+const blob=new Blob([html],{type:‘text/html’});
+const a=document.createElement(‘a’);a.href=URL.createObjectURL(blob);
+a.download=‘APT_Salon_Audit_App.html’;a.click();
+showToast(‘App downloaded! Open the .html file in any browser.’);
 }
 
 function renderDashboard(){
-  const saved=audits.filter(a=>!a.isDraft);
-  const avg=saved.length?Math.round(saved.reduce((s,a)=>s+a.score.pct,0)/saved.length):0;
-  const tm=saved.filter(a=>a.date&&a.date.startsWith(new Date().toISOString().substring(0,7))).length;
-  const os=new Set(saved.map(a=>a.outlet)).size;
-  document.getElementById('dashStats').innerHTML=`<div class="stat-card"><div class="stat-label">Total audits</div><div class="stat-val">${saved.length}</div><div class="stat-sub">all time</div></div><div class="stat-card"><div class="stat-label">This month</div><div class="stat-val">${tm}</div><div class="stat-sub">completed</div></div><div class="stat-card"><div class="stat-label">Avg score</div><div class="stat-val">${avg}%</div><div class="stat-sub">all outlets</div></div><div class="stat-card"><div class="stat-label">Outlets</div><div class="stat-val">${os}</div><div class="stat-sub">audited</div></div>`;
-  document.getElementById('dashRecent').innerHTML=saved.slice(0,6).map(a=>`<div class="recent-row"><div><div class="recent-outlet">${a.outlet||'—'}</div><div class="recent-date">${a.date} · ${a.auditor||'—'}</div></div><span class="score-pill pill-${a.score.grade}">${a.score.pct}% ${a.score.grade}</span></div>`).join('')||`<div class="empty"><div class="empty-icon">◈</div><div class="empty-text">No audits yet.</div></div>`;
-  const om={};saved.forEach(a=>{if(!a.outlet)return;if(!om[a.outlet]){om[a.outlet]={sum:0,count:0};}om[a.outlet].sum+=a.score.pct;om[a.outlet].count++;});
-  const oa=Object.entries(om).map(([k,v])=>({o:k,avg:Math.round(v.sum/v.count)})).sort((a,b)=>b.avg-a.avg);
-  document.getElementById('dashOutletBars').innerHTML=oa.length?oa.map(o=>`<div class="bar-row"><div class="bar-label">${o.o}</div><div class="bar-bg"><div class="bar-fill" style="width:${o.avg}%"></div></div><div class="bar-val">${o.avg}%</div></div>`).join(''):`<div style="color:var(--text3);font-size:13px;padding:1rem 0;">No data yet.</div>`;
+const saved=audits.filter(a=>!a.isDraft);
+const avg=saved.length?Math.round(saved.reduce((s,a)=>s+a.score.pct,0)/saved.length):0;
+const tm=saved.filter(a=>a.date&&a.date.startsWith(new Date().toISOString().substring(0,7))).length;
+const os=new Set(saved.map(a=>a.outlet)).size;
+document.getElementById(‘dashStats’).innerHTML=`<div class="stat-card"><div class="stat-label">Total audits</div><div class="stat-val">${saved.length}</div><div class="stat-sub">all time</div></div><div class="stat-card"><div class="stat-label">This month</div><div class="stat-val">${tm}</div><div class="stat-sub">completed</div></div><div class="stat-card"><div class="stat-label">Avg score</div><div class="stat-val">${avg}%</div><div class="stat-sub">all outlets</div></div><div class="stat-card"><div class="stat-label">Outlets</div><div class="stat-val">${os}</div><div class="stat-sub">audited</div></div>`;
+document.getElementById(‘dashRecent’).innerHTML=saved.slice(0,6).map(a=>`<div class="recent-row"><div><div class="recent-outlet">${a.outlet||'—'}</div><div class="recent-date">${a.date} · ${a.auditor||'—'}</div></div><span class="score-pill pill-${a.score.grade}">${a.score.pct}% ${a.score.grade}</span></div>`).join(’’)||`<div class="empty"><div class="empty-icon">◈</div><div class="empty-text">No audits yet.</div></div>`;
+const om={};saved.forEach(a=>{if(!a.outlet)return;if(!om[a.outlet]){om[a.outlet]={sum:0,count:0};}om[a.outlet].sum+=a.score.pct;om[a.outlet].count++;});
+const oa=Object.entries(om).map(([k,v])=>({o:k,avg:Math.round(v.sum/v.count)})).sort((a,b)=>b.avg-a.avg);
+document.getElementById(‘dashOutletBars’).innerHTML=oa.length?oa.map(o=>`<div class="bar-row"><div class="bar-label">${o.o}</div><div class="bar-bg"><div class="bar-fill" style="width:${o.avg}%"></div></div><div class="bar-val">${o.avg}%</div></div>`).join(’’):`<div style="color:var(--text3);font-size:13px;padding:1rem 0;">No data yet.</div>`;
 }
 
-let _activeMonth='';
-function _getMonthKey(dateStr){if(!dateStr)return null;const d=new Date(dateStr);return isNaN(d)?null:d.toLocaleString('default',{month:'short',year:'numeric'});}
+let _activeMonth=’’;
+function _getMonthKey(dateStr){if(!dateStr)return null;const d=new Date(dateStr);return isNaN(d)?null:d.toLocaleString(‘default’,{month:‘short’,year:‘numeric’});}
 function renderMonthTabs(list){
-  const months=[...new Set(list.map(a=>_getMonthKey(a.date)).filter(Boolean))].sort((a,b)=>new Date('1 '+b)-new Date('1 '+a));
-  const tabs=document.getElementById('monthTabs');if(!tabs)return;
-  tabs.innerHTML='<button class="month-tab'+(_activeMonth===''?' active':'')+'" onclick="setMonthFilter(\'\',this)">All</button>'+months.map(m=>'<button class="month-tab"+(_activeMonth===m?" active":"")+' onclick="setMonthFilter(\''+m+'\',this)">'+m+'</button>').join('');
-  // rebuild properly
-  tabs.innerHTML='<button class="month-tab'+(_activeMonth===''?' active':'')+'" onclick="setMonthFilter(\'\',this)">All</button>';
-  months.forEach(m=>{const b=document.createElement('button');b.className='month-tab'+(_activeMonth===m?' active':'');b.textContent=m;b.onclick=function(){setMonthFilter(m,this);};tabs.appendChild(b);});
+const months=[…new Set(list.map(a=>_getMonthKey(a.date)).filter(Boolean))].sort((a,b)=>new Date(‘1 ‘+b)-new Date(‘1 ‘+a));
+const tabs=document.getElementById(‘monthTabs’);if(!tabs)return;
+tabs.innerHTML=’’;
+const all=document.createElement(‘button’);
+all.className=‘month-tab’+(_activeMonth===’’?’ active’:’’);
+all.textContent=‘All’;
+all.onclick=function(){setMonthFilter(’’,this);};
+tabs.appendChild(all);
+months.forEach(function(m){
+const b=document.createElement(‘button’);
+b.className=‘month-tab’+(_activeMonth===m?’ active’:’’);
+b.textContent=m;
+b.onclick=function(){setMonthFilter(m,this);};
+tabs.appendChild(b);
+});
 }
 function setMonthFilter(m,el){
-  _activeMonth=m;
-  document.querySelectorAll('.month-tab').forEach(t=>t.classList.remove('active'));
-  if(el)el.classList.add('active');
-  renderHistory();
+_activeMonth=m;
+document.querySelectorAll(’.month-tab’).forEach(t=>t.classList.remove(‘active’));
+if(el)el.classList.add(‘active’);
+renderHistory();
 }
 function renderHistory(){
-  const outlets=[...new Set(audits.filter(a=>!a.isDraft&&a.outlet).map(a=>a.outlet))];
-  const sel=document.getElementById('histOutletFilter');const cur=sel.value;
-  sel.innerHTML='<option value="">All outlets</option>'+outlets.map(o=>`<option${o===cur?' selected':''}>${o}</option>`).join('');
-  let list=audits.filter(a=>!a.isDraft);
-  const of=document.getElementById('histOutletFilter').value,tf=document.getElementById('histTypeFilter').value;
-  if(of)list=list.filter(a=>a.outlet===of);
-  if(tf)list=list.filter(a=>a.type===tf);
-  renderMonthTabs(list);
-  if(_activeMonth)list=list.filter(a=>_getMonthKey(a.date)===_activeMonth);
-  document.getElementById('historyBody').innerHTML=list.length?list.map(a=>`<div class="ht-row" onclick="viewAudit(${a.id})"><div class="ht-cell bold">${a.outlet||'—'}</div><div class="ht-cell">${a.date||'—'}</div><div class="ht-cell">${a.auditor||'—'}</div><div class="ht-cell">${a.type||'—'}</div><div class="ht-cell"><span class="score-pill pill-${a.score.grade}">${a.score.pct}% ${a.score.grade}</span></div><div class="ht-cell row-actions" onclick="event.stopPropagation()"><button class="icon-btn" title="View" onclick="event.stopPropagation();viewAudit(${a.id})">👁</button><button class="icon-btn" title="Edit" onclick="event.stopPropagation();openEdit(${a.id})">✏️</button><button class="icon-btn" title="Download" onclick="event.stopPropagation();dlAudit(${a.id})">↓</button><button class="icon-btn" title="Delete" onclick="event.stopPropagation();delAudit(${a.id})">✕</button></div></div>`).join(''):`<div class="empty"><div class="empty-icon">◷</div><div class="empty-text">No records for this period.</div></div>`;
+const outlets=[…new Set(audits.filter(a=>!a.isDraft&&a.outlet).map(a=>a.outlet))];
+const sel=document.getElementById(‘histOutletFilter’);const cur=sel.value;
+sel.innerHTML=’<option value="">All outlets</option>’+outlets.map(o=>`<option${o===cur?' selected':''}>${o}</option>`).join(’’);
+let list=audits.filter(a=>!a.isDraft);
+const of=document.getElementById(‘histOutletFilter’).value,tf=document.getElementById(‘histTypeFilter’).value;
+if(of)list=list.filter(a=>a.outlet===of);
+if(tf)list=list.filter(a=>a.type===tf);
+renderMonthTabs(list);
+if(_activeMonth)list=list.filter(a=>_getMonthKey(a.date)===_activeMonth);
+document.getElementById(‘historyBody’).innerHTML=list.length?list.map(a=>`<div class="ht-row" onclick="viewAudit(${a.id})"><div class="ht-cell bold">${a.outlet||'—'}</div><div class="ht-cell">${a.date||'—'}</div><div class="ht-cell">${a.auditor||'—'}</div><div class="ht-cell">${a.type||'—'}</div><div class="ht-cell"><span class="score-pill pill-${a.score.grade}">${a.score.pct}% ${a.score.grade}</span></div><div class="ht-cell row-actions" onclick="event.stopPropagation()"><button class="icon-btn" title="View" onclick="event.stopPropagation();viewAudit(${a.id})">👁</button><button class="icon-btn" title="Edit" onclick="event.stopPropagation();openEdit(${a.id})">✏️</button><button class="icon-btn" title="Download" onclick="event.stopPropagation();dlAudit(${a.id})">↓</button><button class="icon-btn" title="Delete" onclick="event.stopPropagation();delAudit(${a.id})">✕</button></div></div>`).join(’’):`<div class="empty"><div class="empty-icon">◷</div><div class="empty-text">No records for this period.</div></div>`;
 }
 
-function dlAudit(id){const a=audits.find(x=>x.id===id);if(!a)return;const b=new Blob([JSON.stringify({...a,photos:'[stored locally]'},null,2)],{type:'application/json'});const el=document.createElement('a');el.href=URL.createObjectURL(b);el.download=`APT_Audit_${(a.outlet||'outlet').replace(/\s+/g,'_')}_${a.date}.json`;el.click();}
-function delAudit(id){if(!confirm('Delete this audit?'))return;audits=audits.filter(a=>a.id!==id);saveStorage();renderHistory();}
+function dlAudit(id){const a=audits.find(x=>x.id===id);if(!a)return;const b=new Blob([JSON.stringify({…a,photos:’[stored locally]’},null,2)],{type:‘application/json’});const el=document.createElement(‘a’);el.href=URL.createObjectURL(b);el.download=`APT_Audit_${(a.outlet||'outlet').replace(/\s+/g,'_')}_${a.date}.json`;el.click();}
+function delAudit(id){if(!confirm(‘Delete this audit?’))return;audits=audits.filter(a=>a.id!==id);saveStorage();renderHistory();}
 
 function viewAudit(id){
-  const a=audits.find(x=>x.id===id);if(!a)return;
-  const pct=a.score.pct,grade=a.score.grade;
-  const gradeClass=grade==='A'?'pill-A':grade==='B'?'pill-B':'pill-C';
-  function secHTML(sec){
-    const data=a.sections?.[sec.id]||{};
-    let pass=0,total=0;
-    sec.items.forEach(it=>{const v=data[it.id]?.val;if(v!=='na'){total++;if(v==='pass')pass++;}});
-    const sp=total?Math.round(pass/total*100):0;
-    const sc=sp>=90?'r-pass':sp>=75?'r-na':'r-fail';
-    return `<div class="report-sec">
-      <div class="report-sec-head">
-        <span class="report-sec-name">${sec.icon} ${sec.title}</span>
-        <span class="report-sec-pct ${sc}">${pass}/${total} · ${sp}%</span>
-      </div>
-      ${sec.items.map(it=>{
-        const v=data[it.id]?.val;
-        const comment=data[it.id]?.comment||'';
-        const sc=v==='pass'?'r-pass':v==='fail'?'r-fail':v==='na'?'r-na':'r-skip';
-        const label=v==='pass'?'✓ PASS':v==='fail'?'✗ FAIL':v==='na'?'N/A':'—';
-        return `<div class="report-item"><span class="r-status ${sc}">${label}</span><div class="r-text"><div class="r-label">${it.text}${it.critical?'<span class="critical-badge" style="margin-left:5px;font-size:9px;padding:1px 5px;border-radius:999px;background:var(--amber-bg);color:var(--amber);border:1px solid rgba(224,160,80,.25)">Critical</span>':''}</div>${comment?`<div class="r-comment">"${comment}"</div>`:''}</div></div>`;
-      }).join('')}
-    </div>`;
-  }
-  const obs=a.observations||{};
-  const obsFields=[{l:'Execution gaps',v:obs.gaps},{l:'Staff skill gaps',v:obs.skills},{l:'Sales opportunities',v:obs.sales},{l:'Action items',v:obs.action}];
-  const html=`
-    <div class="report-topbar">
-      <div>
-        <div style="font-family:var(--font-serif);font-size:18px;color:var(--gold2);">${a.outlet||'—'} — Audit Report</div>
-        <div style="font-size:11px;color:var(--text3);">${a.date} · ${a.type}</div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn" onclick="window.print()">🖨 Print</button>
-        <button class="btn" onclick="dlAudit(${a.id})">↓ JSON</button>
-        <button class="btn btn-gold" onclick="closeReport()">✕ Close</button>
-      </div>
-    </div>
-    <div class="report-card">
-      <div class="report-info-grid">
-        <div class="rif"><div class="rif-l">Outlet</div><div class="rif-v">${a.outlet||'—'}</div></div>
-        <div class="rif"><div class="rif-l">Date</div><div class="rif-v">${a.date||'—'}</div></div>
-        <div class="rif"><div class="rif-l">Audit type</div><div class="rif-v">${a.type||'—'}</div></div>
-        <div class="rif"><div class="rif-l">Auditor</div><div class="rif-v">${a.auditor||'—'}</div></div>
-        <div class="rif"><div class="rif-l">Manager on duty</div><div class="rif-v">${a.manager||'—'}</div></div>
-        <div class="rif"><div class="rif-l">Visit time</div><div class="rif-v">${a.time||'—'}</div></div>
-      </div>
-      <div class="report-score-strip">
-        <div class="report-score-big">${pct}%</div>
-        <div>
-          <span class="report-grade ${gradeClass}">${grade}</span>
-          <div style="font-size:12px;color:var(--text3);margin-top:6px;">${a.score.total} passed out of ${a.score.max} items</div>
-          <div style="height:4px;background:var(--bg4);border-radius:3px;width:200px;margin-top:8px;overflow:hidden;"><div style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));width:${pct}%"></div></div>
-        </div>
-        <div class="report-sec-bars" style="flex:1;">
-          ${SECTIONS.map(sec=>{const d=a.sections?.[sec.id]||{};let p=0,t=0;sec.items.forEach(it=>{const v=d[it.id]?.val;if(v!=='na'){t++;if(v==='pass')p++;}});const sp=t?Math.round(p/t*100):0;return `<div class="bar-row" style="margin-bottom:4px;"><div class="bar-label" style="min-width:80px;font-size:10px;">${sec.icon} ${sec.title.split(' ')[0]}</div><div class="bar-bg"><div class="bar-fill" style="width:${sp}%;background:${sp>=90?'#4CAF82':sp>=75?'#E0A050':'#E05555'}"></div></div><div class="bar-val">${sp}%</div></div>`;}).join('')}
-        </div>
-      </div>
-    </div>
-    ${SECTIONS.map(sec=>secHTML(sec)).join('')}
-    ${(obs.gaps||obs.skills||obs.sales||obs.action||obs.remarks)?`
-    <div class="report-card">
-      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;">Management Observations</div>
-      <div class="report-obs">
-        ${obsFields.filter(f=>f.v).map(f=>`<div class="rob"><div class="rob-l">${f.l}</div><div class="rob-v">${f.v}</div></div>`).join('')}
-      </div>
-      ${obs.remarks?`<div style="margin-top:10px;"><div class="rob-l" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;">Overall remarks</div><div class="rob-v" style="margin-top:4px;">${obs.remarks}</div></div>`:''}
-    </div>`:''}`;
-  document.getElementById('reportWrapInner').innerHTML=html;
-  document.getElementById('reportOverlay').classList.add('open');
-  document.getElementById('reportOverlay').scrollTop=0;
+const a=audits.find(x=>x.id===id);if(!a)return;
+const pct=a.score.pct,grade=a.score.grade;
+const gradeClass=grade===‘A’?‘pill-A’:grade===‘B’?‘pill-B’:‘pill-C’;
+function secHTML(sec){
+const data=a.sections?.[sec.id]||{};
+let pass=0,total=0;
+sec.items.forEach(it=>{const v=data[it.id]?.val;if(v!==‘na’){total++;if(v===‘pass’)pass++;}});
+const sp=total?Math.round(pass/total*100):0;
+const sc=sp>=90?‘r-pass’:sp>=75?‘r-na’:‘r-fail’;
+return `<div class="report-sec"> <div class="report-sec-head"> <span class="report-sec-name">${sec.icon} ${sec.title}</span> <span class="report-sec-pct ${sc}">${pass}/${total} · ${sp}%</span> </div> ${sec.items.map(it=>{ const v=data[it.id]?.val; const comment=data[it.id]?.comment||''; const sc=v==='pass'?'r-pass':v==='fail'?'r-fail':v==='na'?'r-na':'r-skip'; const label=v==='pass'?'✓ PASS':v==='fail'?'✗ FAIL':v==='na'?'N/A':'—'; return `<div class="report-item"><span class="r-status ${sc}">${label}</span><div class="r-text"><div class="r-label">${it.text}${it.critical?’<span class="critical-badge" style="margin-left:5px;font-size:9px;padding:1px 5px;border-radius:999px;background:var(--amber-bg);color:var(--amber);border:1px solid rgba(224,160,80,.25)">Critical</span>’:’’}</div>${comment?`<div class="r-comment">"${comment}"</div>`:’’}</div></div>`; }).join('')} </div>`;
 }
-function closeReport(){document.getElementById('reportOverlay').classList.remove('open');}
+const obs=a.observations||{};
+const obsFields=[{l:‘Execution gaps’,v:obs.gaps},{l:‘Staff skill gaps’,v:obs.skills},{l:‘Sales opportunities’,v:obs.sales},{l:‘Action items’,v:obs.action}];
+const html=`<div class="report-topbar"> <div> <div style="font-family:var(--font-serif);font-size:18px;color:var(--gold2);">${a.outlet||'—'} — Audit Report</div> <div style="font-size:11px;color:var(--text3);">${a.date} · ${a.type}</div> </div> <div style="display:flex;gap:8px;"> <button class="btn" onclick="window.print()">🖨 Print</button> <button class="btn" onclick="dlAudit(${a.id})">↓ JSON</button> <button class="btn btn-gold" onclick="closeReport()">✕ Close</button> </div> </div> <div class="report-card"> <div class="report-info-grid"> <div class="rif"><div class="rif-l">Outlet</div><div class="rif-v">${a.outlet||'—'}</div></div> <div class="rif"><div class="rif-l">Date</div><div class="rif-v">${a.date||'—'}</div></div> <div class="rif"><div class="rif-l">Audit type</div><div class="rif-v">${a.type||'—'}</div></div> <div class="rif"><div class="rif-l">Auditor</div><div class="rif-v">${a.auditor||'—'}</div></div> <div class="rif"><div class="rif-l">Manager on duty</div><div class="rif-v">${a.manager||'—'}</div></div> <div class="rif"><div class="rif-l">Visit time</div><div class="rif-v">${a.time||'—'}</div></div> </div> <div class="report-score-strip"> <div class="report-score-big">${pct}%</div> <div> <span class="report-grade ${gradeClass}">${grade}</span> <div style="font-size:12px;color:var(--text3);margin-top:6px;">${a.score.total} passed out of ${a.score.max} items</div> <div style="height:4px;background:var(--bg4);border-radius:3px;width:200px;margin-top:8px;overflow:hidden;"><div style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));width:${pct}%"></div></div> </div> <div class="report-sec-bars" style="flex:1;"> ${SECTIONS.map(sec=>{const d=a.sections?.[sec.id]||{};let p=0,t=0;sec.items.forEach(it=>{const v=d[it.id]?.val;if(v!=='na'){t++;if(v==='pass')p++;}});const sp=t?Math.round(p/t*100):0;return`<div class="bar-row" style="margin-bottom:4px;"><div class="bar-label" style="min-width:80px;font-size:10px;">${sec.icon} ${sec.title.split(’ ‘)[0]}</div><div class="bar-bg"><div class="bar-fill" style="width:${sp}%;background:${sp>=90?'#4CAF82':sp>=75?'#E0A050':'#E05555'}"></div></div><div class="bar-val">${sp}%</div></div>`;}).join('')} </div> </div> </div> ${SECTIONS.map(sec=>secHTML(sec)).join('')} ${(obs.gaps||obs.skills||obs.sales||obs.action||obs.remarks)?`
+<div class="report-card">
+<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;">Management Observations</div>
+<div class="report-obs">
+${obsFields.filter(f=>f.v).map(f=>`<div class="rob"><div class="rob-l">${f.l}</div><div class="rob-v">${f.v}</div></div>`).join(’’)}
+</div>
+${obs.remarks?`<div style="margin-top:10px;"><div class="rob-l" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;">Overall remarks</div><div class="rob-v" style="margin-top:4px;">${obs.remarks}</div></div>`:’’}
+</div>`:''}`;
+document.getElementById(‘reportWrapInner’).innerHTML=html;
+document.getElementById(‘reportOverlay’).classList.add(‘open’);
+document.getElementById(‘reportOverlay’).scrollTop=0;
+}
+function closeReport(){document.getElementById(‘reportOverlay’).classList.remove(‘open’);}
 
 function addCmpSlot(){
-  if(cmpSlots>=4){showToast('Max 4 at once');return;}cmpSlots++;
-  const saved=audits.filter(a=>!a.isDraft);
-  const opts=saved.map(a=>`<option value="${a.id}">${a.outlet} · ${a.date} (${a.score.pct}%)</option>`).join('');
-  const container=document.querySelector('.cmp-controls'),addBtn=container.querySelector('button');
-  const sep=document.createElement('span');sep.className='cmp-label';sep.textContent='vs';container.insertBefore(sep,addBtn);
-  const sel=document.createElement('select');sel.className='filter-select';sel.id='cmpSel'+cmpSlots;sel.onchange=renderCompare;
-  sel.innerHTML='<option value="">Select audit…</option>'+opts;container.insertBefore(sel,addBtn);
+if(cmpSlots>=4){showToast(‘Max 4 at once’);return;}cmpSlots++;
+const saved=audits.filter(a=>!a.isDraft);
+const opts=saved.map(a=>`<option value="${a.id}">${a.outlet} · ${a.date} (${a.score.pct}%)</option>`).join(’’);
+const container=document.querySelector(’.cmp-controls’),addBtn=container.querySelector(‘button’);
+const sep=document.createElement(‘span’);sep.className=‘cmp-label’;sep.textContent=‘vs’;container.insertBefore(sep,addBtn);
+const sel=document.createElement(‘select’);sel.className=‘filter-select’;sel.id=‘cmpSel’+cmpSlots;sel.onchange=renderCompare;
+sel.innerHTML=’<option value="">Select audit…</option>’+opts;container.insertBefore(sel,addBtn);
 }
 
 function renderCompare(){
-  const saved=audits.filter(a=>!a.isDraft);
-  const opts='<option value="">Select audit…</option>'+saved.map(a=>`<option value="${a.id}">${a.outlet} · ${a.date} (${a.score.pct}%)</option>`).join('');
-  for(let i=1;i<=cmpSlots;i++){const s=document.getElementById('cmpSel'+i);if(s){const v=s.value;s.innerHTML=opts;if(v)s.value=v;}}
-  const ids=[];for(let i=1;i<=cmpSlots;i++){const s=document.getElementById('cmpSel'+i);if(s&&s.value)ids.push(Number(s.value));}
-  const sel=ids.map(id=>saved.find(a=>a.id===id)).filter(Boolean);
-  if(!sel.length){document.getElementById('cmpContent').innerHTML='<div class="empty"><div class="empty-icon">⇌</div><div class="empty-text">Select audits above to compare.</div></div>';return;}
-  const MX=[{key:'Total score',fn:a=>a.score.pct+'%'},{key:'Grade',fn:a=>a.score.grade},{key:'Cleanliness',fn:a=>sp(a,'cleanliness')+'%'},{key:'Service',fn:a=>sp(a,'service')+'%'},{key:'Sales',fn:a=>sp(a,'sales')+'%'},{key:'SOP',fn:a=>sp(a,'sop')+'%'},{key:'Auditor',fn:a=>a.auditor||'—'},{key:'Type',fn:a=>a.type||'—'}];
-  document.getElementById('cmpContent').innerHTML=`<div class="cmp-grid">${sel.map(a=>`<div class="cmp-card"><div class="cmp-outlet">${a.outlet||'—'}</div><div class="cmp-date">${a.date} · ${a.type}</div><div class="cmp-score">${a.score.pct}% <span class="score-pill pill-${a.score.grade}">${a.score.grade}</span></div>${MX.map(m=>`<div class="cmp-row"><span class="cmp-key">${m.key}</span><span class="cmp-val">${m.fn(a)}</span></div>`).join('')}</div>`).join('')}</div><div class="dash-card"><div class="dash-card-title">Score comparison</div><div style="position:relative;height:180px;"><canvas id="cmpChart" role="img" aria-label="Comparison bar chart">Comparison chart.</canvas></div></div>`;
-  setTimeout(()=>{const ctx=document.getElementById('cmpChart');if(!ctx||!window.Chart)return;new Chart(ctx,{type:'bar',data:{labels:['Overall','Cleanliness','Grooming','Service','Customer','Sales','SOP','Inventory','Culture'],datasets:sel.map((a,i)=>({label:a.outlet+' '+a.date,data:['total','cleanliness','grooming','service','customer','sales','sop','inventory','culture'].map(k=>k==='total'?a.score.pct:sp(a,k)),backgroundColor:['#C9A84C','#4CAF82','#5B9BD5','#E05555'][i%4],borderRadius:3,borderSkipped:false}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:sel.length>1,labels:{color:'#B8AA8E',font:{size:10},boxWidth:10}}},scales:{x:{ticks:{color:'#7A6E58',font:{size:9},autoSkip:false,maxRotation:0}},y:{max:100,ticks:{callback:v=>v+'%',color:'#7A6E58',font:{size:10}}}}}});},50);
+const saved=audits.filter(a=>!a.isDraft);
+const opts=’<option value="">Select audit…</option>’+saved.map(a=>`<option value="${a.id}">${a.outlet} · ${a.date} (${a.score.pct}%)</option>`).join(’’);
+for(let i=1;i<=cmpSlots;i++){const s=document.getElementById(‘cmpSel’+i);if(s){const v=s.value;s.innerHTML=opts;if(v)s.value=v;}}
+const ids=[];for(let i=1;i<=cmpSlots;i++){const s=document.getElementById(‘cmpSel’+i);if(s&&s.value)ids.push(Number(s.value));}
+const sel=ids.map(id=>saved.find(a=>a.id===id)).filter(Boolean);
+if(!sel.length){document.getElementById(‘cmpContent’).innerHTML=’<div class="empty"><div class="empty-icon">⇌</div><div class="empty-text">Select audits above to compare.</div></div>’;return;}
+const MX=[{key:‘Total score’,fn:a=>a.score.pct+’%’},{key:‘Grade’,fn:a=>a.score.grade},{key:‘Cleanliness’,fn:a=>sp(a,‘cleanliness’)+’%’},{key:‘Service’,fn:a=>sp(a,‘service’)+’%’},{key:‘Sales’,fn:a=>sp(a,‘sales’)+’%’},{key:‘SOP’,fn:a=>sp(a,‘sop’)+’%’},{key:‘Auditor’,fn:a=>a.auditor||’—’},{key:‘Type’,fn:a=>a.type||’—’}];
+document.getElementById(‘cmpContent’).innerHTML=`<div class="cmp-grid">${sel.map(a=>`<div class="cmp-card"><div class="cmp-outlet">${a.outlet||’—’}</div><div class="cmp-date">${a.date} · ${a.type}</div><div class="cmp-score">${a.score.pct}% <span class="score-pill pill-${a.score.grade}">${a.score.grade}</span></div>${MX.map(m=>`<div class="cmp-row"><span class="cmp-key">${m.key}</span><span class="cmp-val">${m.fn(a)}</span></div>`).join(’’)}</div>`).join('')}</div><div class="dash-card"><div class="dash-card-title">Score comparison</div><div style="position:relative;height:180px;"><canvas id="cmpChart" role="img" aria-label="Comparison bar chart">Comparison chart.</canvas></div></div>`;
+setTimeout(()=>{const ctx=document.getElementById(‘cmpChart’);if(!ctx||!window.Chart)return;new Chart(ctx,{type:‘bar’,data:{labels:[‘Overall’,‘Cleanliness’,‘Grooming’,‘Service’,‘Customer’,‘Sales’,‘SOP’,‘Inventory’,‘Culture’],datasets:sel.map((a,i)=>({label:a.outlet+’ ‘+a.date,data:[‘total’,‘cleanliness’,‘grooming’,‘service’,‘customer’,‘sales’,‘sop’,‘inventory’,‘culture’].map(k=>k===‘total’?a.score.pct:sp(a,k)),backgroundColor:[’#C9A84C’,’#4CAF82’,’#5B9BD5’,’#E05555’][i%4],borderRadius:3,borderSkipped:false}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:sel.length>1,labels:{color:’#B8AA8E’,font:{size:10},boxWidth:10}}},scales:{x:{ticks:{color:’#7A6E58’,font:{size:9},autoSkip:false,maxRotation:0}},y:{max:100,ticks:{callback:v=>v+’%’,color:’#7A6E58’,font:{size:10}}}}}});},50);
 }
 
-function sp(audit,sid){const sec=SECTIONS.find(s=>s.id===sid);if(!sec)return 0;const data=audit.sections?.[sid];if(!data)return 0;let s=0,m=0;sec.items.forEach(it=>{const v=data[it.id]?.val;if(v==='na')return;m++;if(v==='pass')s++;});return m?Math.round(s/m*100):0;}
+function sp(audit,sid){const sec=SECTIONS.find(s=>s.id===sid);if(!sec)return 0;const data=audit.sections?.[sid];if(!data)return 0;let s=0,m=0;sec.items.forEach(it=>{const v=data[it.id]?.val;if(v===‘na’)return;m++;if(v===‘pass’)s++;});return m?Math.round(s/m*100):0;}
 
-function openDriveModal(){document.getElementById('driveFolderUrl').value=driveSettings.url;document.getElementById('driveLabel').value=driveSettings.label;document.getElementById('driveModal').classList.add('open');}
-function closeDriveModal(){document.getElementById('driveModal').classList.remove('open');}
-function saveDriveSettings(){driveSettings.url=document.getElementById('driveFolderUrl').value.trim();driveSettings.label=document.getElementById('driveLabel').value.trim();saveDriveStorage();updateDriveStatus();closeDriveModal();showToast('Drive settings saved');}
-function updateDriveStatus(){const el=document.getElementById('driveStatus');if(driveSettings.url){el.innerHTML=`<div class="drive-dot"></div><span>${driveSettings.label||'Drive connected'}</span>`;}else{el.innerHTML=`<div class="drive-dot" style="background:var(--text3)"></div><span>Drive not connected</span>`;}}
-
+function openDriveModal(){document.getElementById(‘driveFolderUrl’).value=driveSettings.url;document.getElementById(‘driveLabel’).value=driveSettings.label;document.getElementById(‘driveModal’).classList.add(‘open’);}
+function closeDriveModal(){document.getElementById(‘driveModal’).classList.remove(‘open’);}
+function saveDriveSettings(){driveSettings.url=document.getElementById(‘driveFolderUrl’).value.trim();driveSettings.label=document.getElementById(‘driveLabel’).value.trim();saveDriveStorage();updateDriveStatus();closeDriveModal();showToast(‘Drive settings saved’);}
+function updateDriveStatus(){/* replaced by setSyncStatus */}
 
 // ── EDIT AUDIT ───────────────────────────────────────────────────
 let _editId=null;
 function openEdit(id){
-  const a=audits.find(x=>x.id===id);if(!a)return;
-  _editId=id;
-  document.getElementById('editSubTitle').textContent=(a.outlet||'—')+' · '+(a.date||'—');
-  const obs=a.observations||{};
-  const OUTLETS=['APT Sunway Pyramid','A&CO Sunway Pyramid','Starling Mall','One Utama'];
-  const TYPES=['Monthly HQ Audit','Weekly Self-Check','Random Spot Check','Follow-up Audit'];
-  const oOpts=OUTLETS.map(o=>'<option'+(a.outlet===o?' selected':'')+'>'+o+'</option>').join('');
-  const tOpts=TYPES.map(t=>'<option'+(a.type===t?' selected':'')+'>'+t+'</option>').join('');
-  const scoreBars=SECTIONS.map(function(sec){
-    const sd=(a.sections&&a.sections[sec.id])||{};
-    let p=0,tot=0;
-    sec.items.forEach(function(it){const v=sd[it.id]&&sd[it.id].val;if(v!=='na'){tot++;if(v==='pass')p++;}});
-    const pct=tot?Math.round(p/tot*100):0;
-    const col=pct>=90?'#4CAF82':pct>=75?'#E0A050':'#E05555';
-    return '<div class="bar-row" style="margin-bottom:7px;"><div class="bar-label">'+sec.icon+' '+sec.title+'</div><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="bar-val">'+pct+'%</div></div>';
-  }).join('');
-  document.getElementById('editFormContent').innerHTML=
-    '<div class="edit-card">'+
-      '<div class="edit-card-title">Audit details</div>'+
-      '<div class="field-grid">'+
-        '<div class="field"><label>Outlet</label><select id="ed_outlet"><option value="">Select…</option>'+oOpts+'</select></div>'+
-        '<div class="field"><label>Auditor</label><input type="text" id="ed_auditor" value="'+(a.auditor||'')+'"/></div>'+
-        '<div class="field"><label>Date</label><input type="date" id="ed_date" value="'+(a.date||'')+'"/></div>'+
-        '<div class="field"><label>Audit type</label><select id="ed_type">'+tOpts+'</select></div>'+
-        '<div class="field"><label>Visit time</label><input type="time" id="ed_time" value="'+(a.time||'')+'"/></div>'+
-        '<div class="field"><label>Manager on duty</label><input type="text" id="ed_manager" value="'+(a.manager||'')+'"/></div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="edit-card">'+
-      '<div class="edit-card-title">Section scores (read-only — submit new audit to change)</div>'+
-      scoreBars+
-    '</div>'+
-    '<div class="edit-card">'+
-      '<div class="edit-card-title">Management observations</div>'+
-      '<div class="mgmt-grid">'+
-        '<div class="mgmt-field"><div class="mgmt-label">Execution gaps</div><textarea class="mgmt-ta" id="ed_gaps">'+(obs.gaps||'')+'</textarea></div>'+
-        '<div class="mgmt-field"><div class="mgmt-label">Staff skill gaps</div><textarea class="mgmt-ta" id="ed_skills">'+(obs.skills||'')+'</textarea></div>'+
-        '<div class="mgmt-field"><div class="mgmt-label">Sales opportunities</div><textarea class="mgmt-ta" id="ed_sales">'+(obs.sales||'')+'</textarea></div>'+
-        '<div class="mgmt-field"><div class="mgmt-label">Action items & follow-up</div><textarea class="mgmt-ta" id="ed_action">'+(obs.action||'')+'</textarea></div>'+
-      '</div>'+
-      '<div class="mgmt-field" style="margin-top:8px;"><div class="mgmt-label">Overall remarks</div>'+
-      '<textarea class="mgmt-ta" id="ed_remarks" style="width:100%;min-height:50px;">'+(obs.remarks||'')+'</textarea></div>'+
-    '</div>';
-  document.getElementById('editOverlay').classList.add('open');
-  document.getElementById('editOverlay').scrollTop=0;
+const a=audits.find(x=>x.id===id);if(!a)return;
+_editId=id;
+document.getElementById(‘editSubTitle’).textContent=(a.outlet||’—’)+’ · ‘+(a.date||’—’);
+const obs=a.observations||{};
+const OUTLETS=[‘APT Sunway Pyramid’,‘A&CO Sunway Pyramid’,‘Starling Mall’,‘One Utama’];
+const TYPES=[‘Monthly HQ Audit’,‘Weekly Self-Check’,‘Random Spot Check’,‘Follow-up Audit’];
+const oOpts=OUTLETS.map(o=>’<option’+(a.outlet===o?’ selected’:’’)+’>’+o+’</option>’).join(’’);
+const tOpts=TYPES.map(t=>’<option’+(a.type===t?’ selected’:’’)+’>’+t+’</option>’).join(’’);
+const scoreBars=SECTIONS.map(function(sec){
+const sd=(a.sections&&a.sections[sec.id])||{};
+let p=0,tot=0;
+sec.items.forEach(function(it){const v=sd[it.id]&&sd[it.id].val;if(v!==‘na’){tot++;if(v===‘pass’)p++;}});
+const pct=tot?Math.round(p/tot*100):0;
+const col=pct>=90?’#4CAF82’:pct>=75?’#E0A050’:’#E05555’;
+return ‘<div class="bar-row" style="margin-bottom:7px;"><div class="bar-label">’+sec.icon+’ ‘+sec.title+’</div><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="bar-val">’+pct+’%</div></div>’;
+}).join(’’);
+document.getElementById(‘editFormContent’).innerHTML=
+‘<div class="edit-card">’+
+‘<div class="edit-card-title">Audit details</div>’+
+‘<div class="field-grid">’+
+‘<div class="field"><label>Outlet</label><select id="ed_outlet"><option value="">Select…</option>’+oOpts+’</select></div>’+
+‘<div class="field"><label>Auditor</label><input type="text" id="ed_auditor" value="'+(a.auditor||'')+'"/></div>’+
+‘<div class="field"><label>Date</label><input type="date" id="ed_date" value="'+(a.date||'')+'"/></div>’+
+‘<div class="field"><label>Audit type</label><select id="ed_type">’+tOpts+’</select></div>’+
+‘<div class="field"><label>Visit time</label><input type="time" id="ed_time" value="'+(a.time||'')+'"/></div>’+
+‘<div class="field"><label>Manager on duty</label><input type="text" id="ed_manager" value="'+(a.manager||'')+'"/></div>’+
+‘</div>’+
+‘</div>’+
+‘<div class="edit-card">’+
+‘<div class="edit-card-title">Section scores (read-only — submit new audit to change)</div>’+
+scoreBars+
+‘</div>’+
+‘<div class="edit-card">’+
+‘<div class="edit-card-title">Management observations</div>’+
+‘<div class="mgmt-grid">’+
+‘<div class="mgmt-field"><div class="mgmt-label">Execution gaps</div><textarea class="mgmt-ta" id="ed_gaps">’+(obs.gaps||’’)+’</textarea></div>’+
+‘<div class="mgmt-field"><div class="mgmt-label">Staff skill gaps</div><textarea class="mgmt-ta" id="ed_skills">’+(obs.skills||’’)+’</textarea></div>’+
+‘<div class="mgmt-field"><div class="mgmt-label">Sales opportunities</div><textarea class="mgmt-ta" id="ed_sales">’+(obs.sales||’’)+’</textarea></div>’+
+‘<div class="mgmt-field"><div class="mgmt-label">Action items & follow-up</div><textarea class="mgmt-ta" id="ed_action">’+(obs.action||’’)+’</textarea></div>’+
+‘</div>’+
+‘<div class="mgmt-field" style="margin-top:8px;"><div class="mgmt-label">Overall remarks</div>’+
+‘<textarea class="mgmt-ta" id="ed_remarks" style="width:100%;min-height:50px;">’+(obs.remarks||’’)+’</textarea></div>’+
+‘</div>’;
+document.getElementById(‘editOverlay’).classList.add(‘open’);
+document.getElementById(‘editOverlay’).scrollTop=0;
 }
-function closeEdit(){document.getElementById('editOverlay').classList.remove('open');_editId=null;}
+function closeEdit(){document.getElementById(‘editOverlay’).classList.remove(‘open’);_editId=null;}
 function saveEdit(){
-  const a=audits.find(x=>x.id===_editId);if(!a)return;
-  a.outlet=document.getElementById('ed_outlet').value||a.outlet;
-  a.auditor=document.getElementById('ed_auditor').value;
-  a.date=document.getElementById('ed_date').value;
-  a.type=document.getElementById('ed_type').value;
-  a.time=document.getElementById('ed_time').value;
-  a.manager=document.getElementById('ed_manager').value;
-  a.observations={
-    gaps:document.getElementById('ed_gaps').value,
-    skills:document.getElementById('ed_skills').value,
-    sales:document.getElementById('ed_sales').value,
-    action:document.getElementById('ed_action').value,
-    remarks:document.getElementById('ed_remarks').value
-  };
-  a.editedAt=new Date().toISOString();
-  a.savedAt=a.editedAt;
-  saveStorage();
-  saveToCloud(a).then(ok=>{
-    showToast(ok?'Audit updated & synced ✓':'Updated locally — sync when online');
-  });
-  closeEdit();renderHistory();
+const a=audits.find(x=>x.id===_editId);if(!a)return;
+a.outlet=document.getElementById(‘ed_outlet’).value||a.outlet;
+a.auditor=document.getElementById(‘ed_auditor’).value;
+a.date=document.getElementById(‘ed_date’).value;
+a.type=document.getElementById(‘ed_type’).value;
+a.time=document.getElementById(‘ed_time’).value;
+a.manager=document.getElementById(‘ed_manager’).value;
+a.observations={
+gaps:document.getElementById(‘ed_gaps’).value,
+skills:document.getElementById(‘ed_skills’).value,
+sales:document.getElementById(‘ed_sales’).value,
+action:document.getElementById(‘ed_action’).value,
+remarks:document.getElementById(‘ed_remarks’).value
+};
+a.editedAt=new Date().toISOString();
+a.savedAt=a.editedAt;
+saveStorage();
+saveToCloud(a).then(ok=>{
+showToast(ok?‘Audit updated & synced ✓’:‘Updated locally — sync when online’);
+});
+closeEdit();renderHistory();
 }
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function showToast(msg){const t=document.getElementById(‘toast’);t.textContent=msg;t.classList.add(‘show’);setTimeout(()=>t.classList.remove(‘show’),2800);}
 
 startNewAudit();renderDashboard();loadStorage();
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
 </body>
 </html>
